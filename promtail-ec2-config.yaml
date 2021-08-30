@@ -1,0 +1,28 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+positions:
+  filename: /opt/promtail/positions.yaml
+clients:
+        - url: http://loki.internal.com:3100/loki/api/v1/push
+scrape_configs:
+- job_name: app
+  ec2_sd_configs:
+    - region: us-east-1
+      filters:
+        - name: tag:Application
+          values:
+            - dotan-service
+  relabel_configs:
+    - source_labels: [__meta_ec2_instance_id]
+      target_label: InstanceID
+      action: replace
+    - source_labels: [__meta_ec2_private_ip]
+      target_label: IP
+      action: replace
+    - source_labels: [__meta_ec2_tag_Application]
+      target_label: Application
+      action: replace
+    - action: replace
+      replacement: /usr/log/*
+      target_label: __path__
