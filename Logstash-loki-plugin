@@ -1,0 +1,21 @@
+docker run  -p 5228:5228/udp -v /etc/docker/logstash/logstash-loki.conf:/home/logstash/logstash-loki.conf -d --name logstash grafana/logstash-output-loki -f logstash-loki.conf
+
+input {
+  udp {
+    port => 5228
+    add_field => {logstash=> "logstash"}
+    codec => json_lines
+    host => "0.0.0.0"
+  }
+#  tcp {
+#    port => 5228
+#    codec => json_lines
+#    host => "0.0.0.0"
+#  }
+}
+
+output {
+  loki {
+    url => "http://loki.internal.aws.kontera.com/loki/api/v1/push"
+  }
+}
