@@ -1,0 +1,25 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+positions:
+  filename: /tmp/positions.yaml
+#clients:
+  #- url: http://grafana-loki:3100/loki/api/v1/push
+scrape_configs:
+- job_name: app
+  file_sd_configs:
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      hostname: ip-10.10.3.216
+      ip: 10.10.3.216
+      app: dotan-service
+      __path__: /usr/kona/*/current/log/*
+- job_name: push1
+  loki_push_api:
+    server:
+      http_listen_port: 3500
+      grpc_listen_port: 3600
+    labels:
+      pushserver: push1
